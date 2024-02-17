@@ -60,12 +60,12 @@ def process_transcript(
 
 def main():
     elevenlabs.set_api_key(ELEVENLABS_KEY)
-    logging.basicConfig(filename="logging.log", level=logging.DEBUG)
+    # logging.basicConfig(filename="logging.log", level=logging.DEBUG)
     temp_folder = os.path.join(os.getcwd(), 'TEMP-mp3')
     os.makedirs(temp_folder, exist_ok=True)
     transcript_path = 'transcript.txt'  # Replace with the path to your transcript file
-    result_triplets = process_transcript(transcript_path, temp_folder)
     deck_name = "ER84"
+    result_triplets = process_transcript(transcript_path, temp_folder, deck_name)
     anki_deck = create_sound_deck(result_triplets, deck_name)
     anki_deck.write_to_file(deck_name + '.apkg')
 

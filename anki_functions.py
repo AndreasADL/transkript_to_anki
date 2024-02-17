@@ -24,12 +24,14 @@ CSS_STYLE = """.target {
 # check https://docs.ankiweb.net/templates/styling.html#card-styling
 
 # To be left alone
-MODEL_UNDERSTAND_ID = random.randrange(1 << 30, 1 << 31)
-MODEL_REPRODUCE_ID = random.randrange(1 << 30, 1 << 31)
+MODEL_TEXT_UNDERSTAND_ID = random.randrange(1 << 30, 1 << 31)
+MODEL_TEXT_REPRODUCE_ID = random.randrange(1 << 30, 1 << 31)
+MODEL_SOUND_UNDERSTAND_ID = random.randrange(1 << 30, 1 << 31)
+MODEL_SOUND_REPRODUCE_ID = random.randrange(1 << 30, 1 << 31)
 DECK_ID = random.randrange(1 << 30, 1 << 31)
-MODEL_SOUND_UNDERSTAND = genanki.Model(
-  MODEL_UNDERSTAND_ID,
-  'Target to Native Model with Target Media',
+MODEL_TEXT_UNDERSTAND = genanki.Model(
+  MODEL_TEXT_UNDERSTAND_ID,
+  'Target to Native Text Model',
   fields=[
     {'name': 'Target Language'},
     {'name': 'Native Language'},
@@ -43,9 +45,9 @@ MODEL_SOUND_UNDERSTAND = genanki.Model(
   ],
   css=CSS_STYLE
   )
-MODEL_SOUND_REPRODUCE = genanki.Model(
-  MODEL_REPRODUCE_ID,
-  'Native to Target Model with Target Media',
+MODEL_TEXT_REPRODUCE = genanki.Model(
+  MODEL_TEXT_REPRODUCE_ID,
+  'Native to Target Text Model',
   fields=[
     {'name': 'Native Language'},
     {'name': 'Target Language'},
@@ -59,8 +61,8 @@ MODEL_SOUND_REPRODUCE = genanki.Model(
   ],
   css=CSS_STYLE
   )
-MODEL_TEXT_UNDERSTAND = genanki.Model(
-  MODEL_UNDERSTAND_ID,
+MODEL_SOUND_UNDERSTAND = genanki.Model(
+  MODEL_SOUND_UNDERSTAND_ID,
   'Target to Native Model with Target Media',
   fields=[
     {'name': 'Target Language'},
@@ -76,8 +78,8 @@ MODEL_TEXT_UNDERSTAND = genanki.Model(
   ],
   css=CSS_STYLE
   )
-MODEL_TEXT_REPRODUCE = genanki.Model(
-  MODEL_REPRODUCE_ID,
+MODEL_SOUND_REPRODUCE = genanki.Model(
+  MODEL_SOUND_REPRODUCE_ID,
   'Native to Target Model with Target Media',
   fields=[
     {'name': 'Native Language'},
@@ -95,6 +97,20 @@ MODEL_TEXT_REPRODUCE = genanki.Model(
   )
 
 
+def create_text_deck(text_note_list, deck_name, both_ways=True):
+    deck = genanki.Deck(deck_id=DECK_ID, name=deck_name)
+    for target, native in text_note_list:
+        new_note = genanki.Note(
+        model=MODEL_TEXT_UNDERSTAND,
+        fields=[target, native])
+        deck.add_note(new_note)
+        if both_ways:
+            new_note = genanki.Note(
+                model=MODEL_TEXT_REPRODUCE,
+                fields=[target, native])
+    return genanki.Package(deck)
+
+
 def create_sound_deck(sound_note_list, deck_name, both_ways=True):
     deck = genanki.Deck(deck_id=DECK_ID, name=deck_name)
     for target, native, sound in sound_note_list:
@@ -106,17 +122,4 @@ def create_sound_deck(sound_note_list, deck_name, both_ways=True):
             new_note = genanki.Note(
                 model=MODEL_SOUND_UNDERSTAND,
                 fields=[target, native, f"[sound:{sound}]"])
-    return genanki.Package(deck)
-
-def create_text_deck(sound_note_list, deck_name, both_ways=True):
-    deck = genanki.Deck(deck_id=DECK_ID, name=deck_name)
-    for target, native in sound_note_list:
-        new_note = genanki.Note(
-        model=MODEL_TEXT_UNDERSTAND,
-        fields=[target, native])
-        deck.add_note(new_note)
-        if both_ways:
-            new_note = genanki.Note(
-                model=MODEL_TEXT_UNDERSTAND,
-                fields=[target, native])
     return genanki.Package(deck)
